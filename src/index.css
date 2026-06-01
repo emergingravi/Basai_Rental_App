@@ -1,0 +1,114 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-display: "Syne", sans-serif;
+  --color-brand: #1D9E75;
+  --color-brand-dark: #147B5A;
+  --color-brand-light: #E8F6F1;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f3f4f6;
+  color: #111827;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom styles for hidden scrollbars but scrollable area */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Skeleton custom glow animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(200, 200, 200, 0.15) 25%, rgba(200, 200, 200, 0.3) 37%, rgba(200, 200, 200, 0.15) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-up-fast {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-shell {
+  animation: fade-slide-in 220ms ease-out;
+}
+
+.surface-card {
+  animation: slide-up-fast 240ms ease-out;
+}
+
+.interactive-chip {
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.interactive-chip:hover {
+  transform: translateY(-1px);
+}
+
+.drawer-enter {
+  animation: drawer-in 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-shell,
+  .surface-card,
+  .drawer-enter,
+  .interactive-chip {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.dark .skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.12) 37%, rgba(255, 255, 255, 0.05) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
