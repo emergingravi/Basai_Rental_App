@@ -14,6 +14,10 @@ type DbListing = {
   type?: string | null
   location?: string | null
   is_rented?: boolean | null
+  owner_name?: string | null
+  owner_phone?: string | null
+  owner_address?: string | null
+  owner_verified?: boolean | null
 }
 
 const fallbackImage = 'https://placehold.co/800x600/png?text=Basai.com'
@@ -47,9 +51,10 @@ export function mapDbListingToUiListing(row: DbListing): UiListing {
     status: row.is_rented ? 'Rented' : 'Available',
     isFeatured: false,
     isVerified: true,
-    ownerName: 'Verified Owner',
-    ownerPhone: '98XXXXXXXX',
-    isOwnerVerified: true,
+    ownerName: row.owner_name || 'Verified Owner',
+    ownerPhone: row.owner_phone || '98XXXXXXXX',
+    ownerAddress: row.owner_address || 'Address not available',
+    isOwnerVerified: row.owner_verified ?? true,
     images: row.images && row.images.length > 0 ? row.images : [fallbackImage],
     amenities: {
       beds: type === '3BHK' ? 3 : type === '2BHK' || type === '2 Room' ? 2 : 1,

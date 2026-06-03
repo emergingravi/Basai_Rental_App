@@ -12,6 +12,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  CheckCircle2,
 } from "lucide-react";
 import { Listing } from "../../data/appSchema";
 
@@ -328,41 +329,82 @@ export const PropertyDetailScreen: React.FC<PropertyDetailScreenProps> = ({
             </p>
           </div>
 
-          <div className="surface-card bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-2xl p-4 shadow-xs">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full bg-[#1D9E75]/10 text-[#1D9E75] font-bold font-display text-base flex items-center justify-center relative">
-                  {listing.ownerName
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                  {listing.isOwnerVerified && (
-                    <span className="absolute bottom-0 right-0 w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center text-[9px] text-white ring-2 ring-white dark:ring-gray-800 font-bold">
-                      ✓
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-xs font-bold text-gray-900 dark:text-white">
-                    {listing.ownerName}
-                  </h3>
-                  <p className="text-[11px] text-gray-400">
-                    Property owner • 100% response rate
-                  </p>
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2.5">
+              Owner details
+            </h2>
+
+            {/* Owner Card */}
+            <div className="surface-card bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-2xl p-4 shadow-xs mb-2.5 space-y-3">
+              {/* Owner Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 rounded-full bg-[#1D9E75] text-white font-bold font-display text-lg flex items-center justify-center relative shadow-2xs">
+                    {listing.ownerName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .substring(0, 2)
+                      .toUpperCase()}
+                    {listing.isOwnerVerified && (
+                      <span className="absolute bottom-0 right-0 w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center text-[9px] text-white ring-2 ring-white dark:ring-gray-800 font-bold">
+                        ✓
+                      </span>
+                    )}
+                  </div>
+                  <div className="grow overflow-hidden">
+                    <div className="flex items-center space-x-1.5">
+                      <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                        {listing.ownerName}
+                      </h3>
+                      <span className="bg-emerald-50 dark:bg-emerald-950/50 text-[#1D9E75] text-[8px] font-bold px-1.5 py-0.5 rounded-sm shrink-0 uppercase">
+                        Verified
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 flex items-center">
+                      <Phone className="w-2.5 h-2.5 mr-1 text-gray-400 shrink-0" />
+                      <span>+977 {listing.ownerPhone}</span>
+                    </p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 truncate flex items-center">
+                      <MapPin className="w-2.5 h-2.5 mr-1 text-gray-400 shrink-0" />
+                      <span>{listing.ownerAddress || 'Address not provided'}</span>
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <span className="bg-emerald-50 dark:bg-emerald-950/50 text-[#1D9E75] text-[10px] font-bold px-2 py-0.5 rounded">
-                Verified
-              </span>
+              {/* Owner Info Details */}
+              <div className="pt-2 border-t border-gray-100 dark:border-gray-700 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-600 dark:text-gray-400">Direct contact</span>
+                  <span className="font-semibold text-gray-900 dark:text-white font-mono">+977 {listing.ownerPhone}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-600 dark:text-gray-400">Owner status</span>
+                  <span className="flex items-center space-x-1 text-[#1D9E75] font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Verified</span>
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-600 dark:text-gray-400">Response rate</span>
+                  <span className="text-gray-900 dark:text-white font-bold">100%</span>
+                </div>
+              </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400">
-              <span>Direct contact phone</span>
-              <span className="font-mono font-semibold text-gray-900 dark:text-white">
-                +977 {listing.ownerPhone}
-              </span>
-            </div>
+            {/* Owner Address Card */}
+            {listing.ownerAddress && listing.ownerAddress !== 'Address not provided' && (
+              <div className="surface-card bg-blue-50 dark:bg-blue-950/30 p-3 rounded-xl border border-blue-100 dark:border-blue-900/60">
+                <div className="flex items-start space-x-2">
+                  <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide">Registered Address</p>
+                    <p className="text-xs text-blue-800 dark:text-blue-200 mt-1 break-words">{listing.ownerAddress}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

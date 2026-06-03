@@ -12,6 +12,7 @@ export interface Listing {
   isVerified: boolean
   ownerName: string
   ownerPhone: string
+  ownerAddress?: string
   ownerAvatar?: string
   isOwnerVerified: boolean
   images: string[]
