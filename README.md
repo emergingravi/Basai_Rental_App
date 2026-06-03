@@ -53,18 +53,7 @@ Deployment
 
 - This repo includes `vercel.json` tailored for Vite; you can deploy to Vercel or any static host that supports SPA routing.
 
-Troubleshooting
-- If you get a Postgres "invalid input syntax for type uuid" error when creating listings, confirm the `owner_id` saved in `basai_owner_session` is a UUID. See `src/lib/supabase.ts` for session handling and `src/components/tabs/AddListingScreen.tsx` for listing creation logic.
 
-Contributing
-- Open issues for bugs or feature requests.
-- Send PRs with a clear change summary and test steps.
 
-License
-- Add your preferred license in `LICENSE`.
 
-Contact
-- Open an issue or PR on GitHub for questions.
 
---
-Generated/updated README by project assistant.
