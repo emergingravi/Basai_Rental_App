@@ -28,7 +28,17 @@ export interface Listing {
   latitude: number
   longitude: number
   createdAt: string
+  owner?: OwnerInfo
 }
+
+export interface OwnerInfo {
+  id: string
+  name?: string
+  number?: string
+  address?: string
+}
+
+// (owner property is included above)
 
 export const ROOM_CATEGORIES: RoomCategory[] = ['1 Room', '2 Room', '1BHK', '2BHK', '3BHK']
 export const FILTERS = ['All', ...ROOM_CATEGORIES]

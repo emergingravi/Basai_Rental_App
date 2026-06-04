@@ -12,7 +12,7 @@ export type Listing = {
 }
 
 export async function createListing(listing: Listing) {
-  const cols = 'id, title, description, price, images, lat, lng, owner_id, created_at, location'
+  const cols = 'id, title, description, price, images, lat, lng, owner_id, created_at, location, owner:owners(id,name,number,address)'
   const { data, error } = await supabase.from('listings').insert([listing]).select(cols)
   if (error) {
     const message =
@@ -38,7 +38,7 @@ export async function getListingsByOwner(owner_id: string) {
 }
 
 export async function getAllListings() {
-  const cols = 'id, title, description, price, images, lat, lng, owner_id, created_at, location'
+  const cols = 'id, title, description, price, images, lat, lng, owner_id, created_at, location, owner:owners(id,name,number,address)'
   const { data, error } = await supabase.from('listings').select(cols)
   if (error) {
     const message =
@@ -51,7 +51,7 @@ export async function getAllListings() {
 }
 
 export async function updateListing(id: number, updates: Partial<Listing>) {
-  const cols = 'id, title, description, price, images, lat, lng, owner_id, created_at, location'
+  const cols = 'id, title, description, price, images, lat, lng, owner_id, created_at, location, owner:owners(id,name,number,address)'
   const { data, error } = await supabase.from('listings').update(updates).eq('id', id).select(cols)
   if (error) {
     const message =

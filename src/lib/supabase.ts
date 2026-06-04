@@ -220,6 +220,43 @@ export async function getOwnerById(id: string | number) {
 
   return { data, error: null }
 }
+export const fetchListings = async () => {
+  const { data, error } = await supabase
+    .from("listings")
+    .select(`
+      id,
+      title,
+      description,
+      price,
+      area,
+      location,
+      lat,
+      lng,
+      images,
+      property_type,
+      furnished,
+      parking,
+      water,
+      internet,
+      is_available,
+      is_verified,
+      views,
+      created_at,
+      updated_at,
+      is_rented,
+      owner:owners (
+        id,
+        name,
+        number,
+        address
+      )
+    `);
+
+  if (error) throw error;
+      console.log("error Fetching listings:", data);
+
+  return data;
+};
 
 export function getOwnerSession(): OwnerRecord | null {
   try {

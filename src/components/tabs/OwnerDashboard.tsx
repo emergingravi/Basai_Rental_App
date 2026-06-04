@@ -44,9 +44,9 @@ export const OwnerDashboard: React.FC = () => {
     if (!id) return
     if (!confirm('Delete this listing? This action cannot be undone.')) return
     try {
-      const res = await listingsLib.deleteListing(id)
+      const res = await listingsLib.deleteListing(id as any)
       if ((res as any)?.error) throw new Error((res as any).error.message || 'Delete failed')
-      setListings((prev) => prev?.filter((l) => l.id !== id) ?? null)
+      setListings((prev) => prev?.filter((l) => String(l.id) !== String(id)) ?? null)
     } catch (err) {
       console.error('Delete failed', err)
     }
@@ -55,9 +55,9 @@ export const OwnerDashboard: React.FC = () => {
   const handleToggleAvailability = async (id?: number, current?: boolean) => {
     if (!id) return
     try {
-      const res = await listingsLib.updateListing(id, { is_rented: !current })
+      const res = await listingsLib.updateListing(id as any, { is_rented: !current })
       if ((res as any)?.error) throw new Error((res as any).error.message || 'Update failed')
-      setListings((prev) => prev?.map((l) => (l.id === id ? { ...l, is_rented: !current } as Listing : l)) ?? null)
+      setListings((prev) => prev?.map((l) => (String(l.id) === String(id) ? { ...l, is_rented: !current } as Listing : l)) ?? null)
     } catch (err) {
       console.error('Toggle failed', err)
     }
@@ -67,9 +67,9 @@ export const OwnerDashboard: React.FC = () => {
     if (!editing?.id) return
     setSaving(true)
     try {
-      const res = await listingsLib.updateListing(editing.id as number, updates)
+      const res = await listingsLib.updateListing(editing.id as any, updates)
       if ((res as any)?.error) throw new Error((res as any).error.message || 'Save failed')
-      setListings((prev) => prev?.map((l) => (l.id === editing.id ? { ...l, ...updates } as Listing : l)) ?? null)
+      setListings((prev) => prev?.map((l) => (String(l.id) === String(editing.id) ? { ...l, ...updates } as Listing : l)) ?? null)
       setEditing(null)
     } catch (err) {
       console.error('Save failed', err)

@@ -47,9 +47,31 @@ export function mapDbListingToUiListing(row: DbListing): UiListing {
     status: row.is_rented ? 'Rented' : 'Available',
     isFeatured: false,
     isVerified: true,
-    ownerName: 'Verified Owner',
-    ownerPhone: '98XXXXXXXX',
+    // support both `owners: [{...}]` and `owner: {...}` shapes returned by Supabase
+    ownerName:
+      (row as any).owners?.[0]?.name || (row as any).owner?.name || 'Verified Owner',
     isOwnerVerified: true,
+    ownerPhone:
+      ((row as any).owners?.[0]?.number && String((row as any).owners[0].number)) ||
+      ((row as any).owner?.number && String((row as any).owner.number)) ||
+      (row as any).owner_phone ||
+      (row as any).ownerPhone ||
+      '98XXXXXXXX',
+    owner: (row as any).owners?.[0]
+      ? {
+          id: String((row as any).owners[0].id),
+          name: (row as any).owners[0].name,
+          number: (row as any).owners[0].number ? String((row as any).owners[0].number) : undefined,
+          address: (row as any).owners[0].address,
+        }
+      : (row as any).owner
+      ? {
+          id: String((row as any).owner.id),
+          name: (row as any).owner.name,
+          number: (row as any).owner.number ? String((row as any).owner.number) : undefined,
+          address: (row as any).owner.address,
+        }
+      : undefined,
     images: row.images && row.images.length > 0 ? row.images : [fallbackImage],
     amenities: {
       beds: type === '3BHK' ? 3 : type === '2BHK' || type === '2 Room' ? 2 : 1,

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Home as HomeIcon, Search as SearchIcon, PlusCircle, Heart, User as UserIcon, Gift, ShieldCheck } from 'lucide-react';
-
+import { PropertyDetailScreen } from './components/listings/PropertyDetailScreen';
 import { RolePickerScreen } from './components/auth/RolePickerScreen';
 import OwnerAuthScreen from './components/auth/OwnerAuthScreen';
+import AdminLoginScreen from './components/auth/AdminLoginScreen';
 import AdminDashboard from './components/tabs/AdminDashboard';
 
 import { HomeScreen } from './components/tabs/HomeScreen';
@@ -11,15 +12,13 @@ import { AddListingScreen } from './components/tabs/AddListingScreen';
 import { SavedScreen } from './components/tabs/SavedScreen';
 import { ProfileScreen } from './components/tabs/ProfileScreen';
 import OwnerDashboard from './components/tabs/OwnerDashboard';
-
-import { PropertyDetailScreen } from './components/listings/PropertyDetailScreen';
 import { Listing, UserRole } from './data/appSchema';
 import listingsLib from './lib/listings';
 import { mapDbListingToUiListing } from './lib/listingAdapter';
 import { getOwnerById, getOwnerSession, OwnerRecord, signOutOwner } from './lib/supabase';
 
 export default function App() {
-  const [authStage, setAuthStage] = useState<'picker' | 'ownerAuth' | 'main'>('picker');
+  const [authStage, setAuthStage] = useState<'picker' | 'ownerAuth' | 'adminAuth' | 'main'>('picker');
   const [role, setRole] = useState<UserRole | 'Admin'>('Customer');
   const [userName, setUserName] = useState('');
   const [ownerProfile, setOwnerProfile] = useState<OwnerRecord | null>(null);
@@ -49,7 +48,37 @@ export default function App() {
           setListings([]);
           return;
         }
-        setListings(result.data.map(mapDbListingToUiListing));
+        // ensure owner details are fetched when the joined `owner` is missing
+        const rawRows = Array.isArray(result.data) ? result.data : []
+        const enhancedRows = await Promise.all(
+          rawRows.map(async (r: any) => {
+            if (!r.owner && r.owner_id) {
+              try {
+                const ownerRes = await getOwnerById(r.owner_id)
+                console.debug('owner fetch result for', r.owner_id, ownerRes)
+                if (!ownerRes?.error && ownerRes?.data) {
+                  r.owner = ownerRes.data
+                }
+              } catch (e) {
+                // ignore per-row owner fetch errors
+              }
+            }
+            return r
+          })
+        )
+
+        const mapped = enhancedRows.map(mapDbListingToUiListing)
+        try {
+          console.debug('First raw listing row (stringified):', enhancedRows && JSON.stringify(enhancedRows[0], null, 2))
+        } catch (e) {
+          console.debug('First raw listing row:', enhancedRows && enhancedRows[0])
+        }
+        try {
+          console.debug('First mapped listing (stringified):', mapped && JSON.stringify(mapped[0], null, 2))
+        } catch (e) {
+          console.debug('First mapped listing:', mapped && mapped[0])
+        }
+        setListings(mapped);
       } catch (error) {
         if (!mounted) return;
         console.error('Unexpected error loading listings:', error);
@@ -112,9 +141,8 @@ export default function App() {
       // show owner auth (login or register)
       setAuthStage('ownerAuth');
     } else {
-      // Admin enters directly
-      setAuthStage('main');
-      setCurrentTab('Home');
+      // Admin must sign in with email/password
+      setAuthStage('adminAuth');
     }
   };
 
@@ -354,6 +382,14 @@ export default function App() {
                   </React.Suspense>
                 </div>
               )}
+
+              {authStage === 'adminAuth' && (
+                <div className="p-4">
+                  <React.Suspense fallback={<div>Loading...</div>}>
+                    <AdminLoginScreen onBack={() => setAuthStage('picker')} onLoggedIn={handleLoggedIn} />
+                  </React.Suspense>
+                </div>
+              )}
             </div>
           ) : (
             <div className="w-full relative page-shell">
@@ -443,14 +479,14 @@ export default function App() {
               </div>
 
               <p className="text-[11px] text-slate-400 leading-relaxed max-w-md mx-auto mb-3">
-                This project is built to make finding rooms easier and faster for people across Nepal. Scan the Feedback QR below to improve the project.
+                This project is built to make finding rooms easier and faster for people across Nepal. Scan the feedback QR code below to help improve the project.
               </p>
 
               <div className="inline-flex items-center space-x-3 bg-slate-950 p-2 rounded-xl border border-purple-800/60">
                 <div className="w-20 h-20 bg-white p-1 rounded-md shrink-0 flex items-center justify-center">
                   <img
                     src="/Screenshot%202026-06-01%20183748.png"
-                    alt="Feedback QR"
+                    alt="Feedback QR code"
                     className="w-full h-full object-contain rounded-md"
                   />
                 </div>
